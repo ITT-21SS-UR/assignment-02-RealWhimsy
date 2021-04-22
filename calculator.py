@@ -2,21 +2,13 @@
 import sys
 from PyQt5 import uic, Qt
 
+CLEAR = "Clear"
+BACKSPACE = "Backspace"
+EVALUATE = "Evaluate"
 
+allowed_keys = "0123456789+-*/,."
 app = Qt.QApplication(sys.argv)
 win = uic.loadUi("calculator.ui")
-
-
-def backspace():
-    win.eval_text.setText(win.eval_text.toPlainText()[:-1])
-
-
-def clear():
-    win.eval_text.setText("")
-
-
-def evaluate():
-    win.eval_text.setText(str(eval(win.eval_text.toPlainText())))
 
 
 def logging_decorator(func):
@@ -24,6 +16,22 @@ def logging_decorator(func):
         func(arg)
         print("Input: " + str(arg))
     return wrapper
+
+
+@logging_decorator
+def evaluate(arg=EVALUATE):
+    expression = win.eval_text.toPlainText().replace(",", ".")  # replace ',' with '.'
+    win.eval_text.setText(str(eval(expression)))
+
+
+@logging_decorator
+def backspace(arg=BACKSPACE):
+    win.eval_text.setText(win.eval_text.toPlainText()[:-1])
+
+
+@logging_decorator
+def clear(arg=CLEAR):
+    win.eval_text.setText("")
 
 
 @logging_decorator
@@ -48,13 +56,29 @@ def set_click_listeners():
     win.button_subtract.clicked.connect(lambda: add_input_to_text('-'))
     win.button_add.clicked.connect(lambda: add_input_to_text('+'))
 
-    win.button_clear.clicked.connect(lambda: clear())
-    win.button_backspace.clicked.connect(lambda: backspace())
-    win.button_evaluate.clicked.connect(lambda: evaluate())
+    win.button_clear.clicked.connect(lambda: clear(CLEAR))
+    win.button_backspace.clicked.connect(lambda: backspace(BACKSPACE))
+    win.button_evaluate.clicked.connect(lambda: evaluate(EVALUATE))
+
+
+def key_press_event(event):
+    if Qt.QKeySequence(event.key()).toString() in allowed_keys:
+        add_input_to_text(Qt.QKeySequence(event.key()).toString())
+
+    # Key_Return = "Normal" Enter, Key_Enter = NumPad Enter
+    elif event.key() == Qt.Qt.Key_Return or event.key() == Qt.Qt.Key_Enter:
+        evaluate(EVALUATE)
+    elif event.key() == Qt.Qt.Key_Backspace:
+        backspace(BACKSPACE)
+
+
+def override_key_press_event():
+    win.keyPressEvent = key_press_event
 
 
 if __name__ == "__main__":
     set_click_listeners()
+    override_key_press_event()
     win.show()
     app.exec()
 
