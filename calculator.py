@@ -82,8 +82,25 @@ def override_key_press_event():
     win.keyPressEvent = key_press_event
 
 
+def add_background_color():
+    win.button_0.setStyleSheet("background-color: lightblue")
+    win.button_1.setStyleSheet("background-color: lightblue")
+    win.button_2.setStyleSheet("background-color: lightblue")
+    win.button_3.setStyleSheet("background-color: lightblue")
+    win.button_4.setStyleSheet("background-color: lightblue")
+    win.button_5.setStyleSheet("background-color: lightblue")
+    win.button_6.setStyleSheet("background-color: lightblue")
+    win.button_7.setStyleSheet("background-color: lightblue")
+    win.button_8.setStyleSheet("background-color: lightblue")
+    win.button_9.setStyleSheet("background-color: lightblue")
+    win.button_decimal.setStyleSheet("background-color: lightblue")
+    win.button_evaluate.setStyleSheet("background-color: orange")
+    win.button_clear.setStyleSheet("background-color: red")
+
+
 if __name__ == "__main__":
     set_click_listeners()
+    add_background_color()
     override_key_press_event()
     win.show()
     app.exec()
